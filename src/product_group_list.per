@@ -1,0 +1,23 @@
+layout (text="Product Group")
+table tab_product_group_list
+{
+[f01       |f02       ]
+[f01       |f02       ]
+[f01       |f02       ]
+[f01       |f02       ]
+[f01       |f02       ]
+[f01       |f02       ]
+[f01       |f02       ]
+[f01       |f02       ]
+[f01       |f02       ]
+[f01       |f02       ]
+}
+end
+end
+attributes
+edit f01 = formonly.major, imagecolumn=img;
+edit f02 = formonly.minor;
+phantom formonly.img;
+PHANTOM formonly.pr_pg_code;
+instructions
+screen record scr(major, minor,img, pr_pg_code)

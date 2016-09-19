@@ -1,0 +1,23 @@
+layout (text=%"window.catalog.title")
+table tab_catalog
+{
+[f01       |f02       ]
+[f01       |f02       ]
+[f01       |f02       ]
+[f01       |f02       ]
+[f01       |f02       ]
+[f01       |f02       ]
+[f01       |f02       ]
+[f01       |f02       ]
+[f01       |f02       ]
+[f01       |f02       ]
+}
+END
+end
+attributes
+edit f01 = formonly.major, imagecolumn=img;
+edit f02 = formonly.minor;
+phantom formonly.img;
+phantom formonly.pr_code;
+instructions
+screen record scr(major, minor,img, pr_code)

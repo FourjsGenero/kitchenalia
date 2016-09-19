@@ -1,0 +1,22 @@
+layout (text="Order Detail")
+stack
+
+group
+edit formonly.cu_name, title="Customer";
+edit formonly.oh_order_date, title="Order Date";
+LABEL formonly.oh_order_value, TITLE="Order Value", FORMAT="-----,-$&.&&";
+BUTTON EDIT, TEXT="Edit Details";
+end 
+GROUP
+BUTTON add_to_order, TEXT="Add to Order";
+end
+group
+table scr
+edit formonly.major, imagecolumn=img;
+edit formonly.minor, JUSTIFY=right;
+phantom formonly.img;
+phantom formonly.ol_idx;
+end # table
+END
+
+end #stack

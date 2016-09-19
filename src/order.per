@@ -1,0 +1,23 @@
+layout (text=%"window.order.title")
+table tab_order_header_list
+{
+[f01       |f02       ]
+[f01       |f02       ]
+[f01       |f02       ]
+[f01       |f02       ]
+[f01       |f02       ]
+[f01       |f02       ]
+[f01       |f02       ]
+[f01       |f02       ]
+[f01       |f02       ]
+[f01       |f02       ]
+}
+end
+end
+attributes
+edit f01 = formonly.major, imagecolumn=img;
+edit f02 = formonly.minor;
+phantom formonly.img;
+phantom formonly.oh_code;
+instructions
+screen record scr(major, minor,img, oh_code)

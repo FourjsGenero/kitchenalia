@@ -1,0 +1,9 @@
+<ToolBar>
+    <ToolBarItem name="append" />
+    <ToolBarSeparator/>
+    <ToolBarItem name="toggle" />
+    <ToolBarSeparator/>
+    <ToolBarItem name="sort"  />
+    <ToolBarSeparator/>
+    <ToolBarItem name="filter"  />
+</ToolBar>

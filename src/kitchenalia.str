@@ -1,0 +1,41 @@
+"action.catalog.text"  = "Catalog"
+"action.home.text"     = "Home"
+
+"action.sort.text"    = "Sort"
+"action.filter.text"   = "Filter"
+"action.toggle.text"   = "Detail"
+
+"action.append.text"   = "Add"
+"action.about.text" = "About"
+"action.barcode.text" = "Barcode"
+"action.order.text" = "Orders"
+"action.settings.text" = "Settings"
+"action.sync.text" = "Sync"
+
+"action.fullsync.text" = "Full"
+"action.partialsync.text" = "No Images"
+"action.uploadsync.text" = "Upload Only"
+"action.register.text" = "Register Device"
+
+
+"field.progress.text" = "Progress"
+
+"field.url.text" = "URL"
+"field.device_prefix.text" = "Device ID"
+"field.next_customer.text" = "Next Customer Number"
+"field.next_order.text" = "Next Order Number"
+
+"field.url.comment" = "Enter the URL base to use for web services"
+"field.device_prefix.comment" = "Enter unique identifier for this device"
+"field.next_customer.comment" = "Enter the next number to give to customers"
+"field.next_order.comment" = "Enter the next number to give to orders"
+
+"window.catalog.title" = "Catalog"
+"window.order.title" = "Orders"
+"window.home.title"    = "Kitchenalia"
+"window.settings.title" = "Settings"
+"window.sync.title" = "Sync"
+
+about.title="About"
+about.text="Kitchenalia v1.0\nFourJs Development Tools Inc."
+
