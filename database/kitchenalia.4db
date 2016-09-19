@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Schema gstVersion="3001d" id="{76bddd53-65f4-4a04-810a-8b023aabf06e}" version="3.0">
+  <AGSettings version="1.1">
+    <DynamicProperties version="2">
+      <DynamicProperty description="Associated label when generating form" initialValue="" isDefaultInherited="false" isHidden="false" label="Label" name="label" readOnly="false" type="TEXT"/>
+      <DynamicProperty description="Associated widget" editorInfo="contains:ButtonEdit|CheckBox|ComboBox|DateEdit|DateTimeEdit|Edit|FFImage|FFLabel|Field|Phantom|ProgressBar|RadioGroup|Slider|SpinEdit|TextEdit|TimeEdit" initialValue="Edit" isDefaultInherited="false" isHidden="false" label="Widget" name="widget" readOnly="false" type="ENUM"/>
+      <DynamicPropertyGroup collapsed="false" description="Formfied properties" label="Formfield" name="formfieldGroup" properties="label;widget"/>
+    </DynamicProperties>
+    <NodeInfos version="1">
+      <NodeInfo mimeType="db/column" properties="widget;label"/>
+    </NodeInfos>
+  </AGSettings>
+  <ExtractionSettings>
+    <ExtractionOptions casens="LowerCase" cvmeth="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" ignerr="true" systab="false" type="SQLite"/>
+  </ExtractionSettings>
+  <Table active="true" name="product" status="A" uuid="db/table277">
+    <Column fglLength="8" fglType="0" name="pr_code" notNull="true" order="1" status="A" uuid="db/column1636"/>
+    <Column fglLength="80" fglType="201" name="pr_desc" notNull="true" order="2" status="A" uuid="db/column1637"/>
+    <Column fglLength="2" fglType="0" name="pr_pg_code" notNull="true" order="3" status="A" uuid="db/column1638"/>
+    <Column fglLength="2818" fglType="5" name="pr_price" notNull="false" order="4" status="A" uuid="db/column1639"/>
+    <Column fglLength="20" fglType="201" name="pr_barcode" notNull="false" order="5" status="A" uuid="db/column1640"/>
+    <Index indexColumns="pr_code" indexConstraint="primaryKey" name="PK_product_1" status="A" uuid="db/index396"/>
+    <Index indexColumns="pr_desc, pr_code" indexConstraint="index" name="IDX_product_1" status="A" uuid="db/index397"/>
+    <Index indexColumns="pr_pg_code, pr_code" indexConstraint="index" name="IDX_product_2" status="A" uuid="db/index398"/>
+  </Table>
+  <Table active="true" name="product_image" status="A" uuid="db/table278">
+    <Column fglLength="8" fglType="0" name="pi_pr_code" notNull="true" order="1" status="A" uuid="db/column1641"/>
+    <Column fglLength="4" fglType="2" name="pi_idx" notNull="true" order="2" status="A" uuid="db/column1642"/>
+    <Column fglLength="80" fglType="201" name="pi_filename" notNull="true" order="3" status="A" uuid="db/column1643"/>
+    <Index indexColumns="pi_pr_code, pi_idx" indexConstraint="primaryKey" name="PK_product_image_1" status="A" uuid="db/index399"/>
+  </Table>
+  <Table active="true" name="product_group" status="A" uuid="db/table279">
+    <Column fglLength="2" fglType="0" name="pg_code" notNull="true" order="1" status="A" uuid="db/column1644"/>
+    <Column fglLength="80" fglType="201" name="pg_desc" notNull="true" order="2" status="A" uuid="db/column1645"/>
+    <Index indexColumns="pg_code" indexConstraint="primaryKey" name="PK_product_group_1" status="A" uuid="db/index400"/>
+    <Index indexColumns="pg_desc, pg_code" indexConstraint="index" name="IDX_product_group_1" status="A" uuid="db/index401"/>
+  </Table>
+  <Table active="true" name="customer" status="A" uuid="db/table280">
+    <Column fglLength="10" fglType="0" name="cu_code" notNull="true" order="1" status="A" uuid="db/column1646"/>
+    <Column fglLength="80" fglType="201" name="cu_name" notNull="true" order="2" status="A" uuid="db/column1647"/>
+    <Column fglLength="255" fglType="201" name="cu_address" notNull="false" order="3" status="A" uuid="db/column1648"/>
+    <Column fglLength="80" fglType="201" name="cu_city" notNull="false" order="4" status="A" uuid="db/column1649"/>
+    <Column fglLength="2" fglType="0" name="cu_state" notNull="false" order="5" status="A" uuid="db/column1650"/>
+    <Column fglLength="80" fglType="201" name="cu_country" notNull="false" order="6" status="A" uuid="db/column1651"/>
+    <Column fglLength="10" fglType="0" name="cu_postcode" notNull="false" order="7" status="A" uuid="db/column1652"/>
+    <Index indexColumns="cu_code" indexConstraint="primaryKey" name="PK_customer_1" status="A" uuid="db/index402"/>
+    <Index indexColumns="cu_name, cu_code" indexConstraint="index" name="IDX_customer_1" status="A" uuid="db/index403"/>
+  </Table>
+  <Table active="true" name="order_header" status="A" uuid="db/table281">
+    <Column fglLength="10" fglType="0" name="oh_code" notNull="true" order="1" status="A" uuid="db/column1653"/>
+    <Column fglLength="10" fglType="0" name="oh_cu_code" notNull="true" order="2" status="A" uuid="db/column1654"/>
+    <Column fglLength="4" fglType="7" name="oh_order_date" notNull="true" order="3" status="A" uuid="db/column1655"/>
+    <Column fglLength="3594" fglType="10" name="oh_upload" notNull="false" order="4" status="A" uuid="db/column1656"/>
+    <Column fglLength="2818" fglType="5" name="oh_order_value" notNull="false" order="5" status="A" uuid="db/column1657"/>
+    <Column fglLength="80" fglType="201" name="oh_delivery_name" notNull="false" order="6" status="A" uuid="db/column1658"/>
+    <Column fglLength="255" fglType="201" name="oh_delivery_address" notNull="false" order="7" status="A" uuid="db/column1659"/>
+    <Column fglLength="80" fglType="201" name="oh_delivery_city" notNull="false" order="8" status="A" uuid="db/column1660"/>
+    <Column fglLength="2" fglType="0" name="oh_delivery_state" notNull="false" order="9" status="A" uuid="db/column1661"/>
+    <Column fglLength="80" fglType="201" name="oh_delivery_country" notNull="false" order="10" status="A" uuid="db/column1662"/>
+    <Column fglLength="10" fglType="0" name="oh_delivery_postcode" notNull="false" order="11" status="A" uuid="db/column1663"/>
+    <Index indexColumns="oh_code" indexConstraint="primaryKey" name="PK_order_header_1" status="A" uuid="db/index404"/>
+  </Table>
+  <Table active="true" name="order_line" status="A" uuid="db/table282">
+    <Column fglLength="10" fglType="0" name="ol_oh_code" notNull="true" order="1" status="A" uuid="db/column1664"/>
+    <Column fglLength="4" fglType="2" name="ol_idx" notNull="true" order="2" status="A" uuid="db/column1665"/>
+    <Column fglLength="8" fglType="0" name="ol_pr_code" notNull="true" order="3" status="A" uuid="db/column1666"/>
+    <Column fglLength="2818" fglType="5" name="ol_qty" notNull="true" order="4" status="A" uuid="db/column1667"/>
+    <Column fglLength="2818" fglType="5" name="ol_price" notNull="true" order="5" status="A" uuid="db/column1668"/>
+    <Column fglLength="2818" fglType="5" name="ol_line_value" notNull="true" order="6" status="A" uuid="db/column1669"/>
+    <Index indexColumns="ol_oh_code, ol_idx" indexConstraint="primaryKey" name="PK_order_line_1" status="A" uuid="db/index405"/>
+  </Table>
+  <Table active="true" name="settings" status="A" uuid="db/table283">
+    <Column fglLength="80" fglType="201" name="url" notNull="false" order="1" status="A" uuid="db/column1670"/>
+    <Column fglLength="2" fglType="0" name="device_prefix" notNull="false" order="2" status="A" uuid="db/column1671"/>
+    <Column fglLength="4" fglType="2" name="next_customer" notNull="false" order="3" status="A" uuid="db/column1672"/>
+    <Column fglLength="4" fglType="2" name="next_order" notNull="false" order="4" status="A" uuid="db/column1673"/>
+  </Table>
+  <ForeignKey cascadeDelete="false" fkColumns="pi_pr_code" fkRefColumns="pr_code" name="FK_product_image_product_1" refTable="product" status="A" table="product_image" uuid="db/foreignkey206"/>
+  <ForeignKey cascadeDelete="false" fkColumns="pr_pg_code" fkRefColumns="pg_code" name="FK_product_product_group_1" refTable="product_group" status="A" table="product" uuid="db/foreignkey207"/>
+  <ForeignKey cascadeDelete="false" fkColumns="oh_cu_code" fkRefColumns="cu_code" name="FK_order_header_customer_1" refTable="customer" status="A" table="order_header" uuid="db/foreignkey208"/>
+  <ForeignKey cascadeDelete="false" fkColumns="ol_oh_code" fkRefColumns="oh_code" name="FK_order_line_order_header_1" refTable="order_header" status="A" table="order_line" uuid="db/foreignkey209"/>
+  <ForeignKey cascadeDelete="false" fkColumns="ol_pr_code" fkRefColumns="pr_code" name="FK_order_line_product_1" refTable="product" status="A" table="order_line" uuid="db/foreignkey210"/>
+  <Views ActiveView="View-1" showLabels="true">
+    <View Name="View-1">
+      <Layout>
+        <![CDATA[AAAAAgAAABYAZABiAC8AdABhAGIAbABlADIANwA3QGLgAAAAAABAWsAAAAAAAD9gYk3S8an8AQAAABYAZABiAC8AdABhAGIAbABlADIANwA4QGbgAAAAAABAYWAAAAAAAD9wYk3S8an8AQAAABYAZABiAC8AdABhAGIAbABlADIANwA5QGrgAAAAAABAZWAAAAAAAD94k3S8an76AQAAABYAZABiAC8AdABhAGIAbABlADIAOAAwQG7gAAAAAABAaWAAAAAAAD+AYk3S8an8AQAAABYAZABiAC8AdABhAGIAbABlADIAOAAxQHFwAAAAAABAbWAAAAAAAD+EeuFHrhR8AQAAABYAZABiAC8AdABhAGIAbABlADIAOAAyQHNwAAAAAABAcLAAAAAAAD+Ik3S8an78AQAAABYAZABiAC8AdABhAGIAbABlADIAOAAzQHVwAAAAAABAcrAAAAAAAD+MrAgxJul8AQ==]]>
+      </Layout>
+    </View>
+  </Views>
+</Schema>

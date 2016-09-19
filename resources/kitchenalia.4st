@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ANSI_X3.4-1968"?>
+<StyleList>
+  <Style name="Window">
+     <StyleAttribute name="windowType" value="normal" />
+  </Style>
+ 
+  <Style name="Window.dialog">
+     <StyleAttribute name="windowType" value="modal" />
+     <StyleAttribute name="sizable" value="no" />
+     <StyleAttribute name="position" value="center" />
+    
+  </Style>
+
+</StyleList>
