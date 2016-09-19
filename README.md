@@ -1,4 +1,4 @@
 # kitchenalia
-The Kitchenalia GeneroMobile demo application
+UNDER CONSTRUCTION - WORK IN PROGRESS
 
-Placeholder for this demo application, still WIP
+The Kitchenalia GeneroMobile demo application
