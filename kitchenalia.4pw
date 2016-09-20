@@ -132,7 +132,7 @@
       <File filePath="database/kitchenalia.4db"/>
     </Library>
     <Library binaryName="Entities" id="212784684" label="Entities"/>
-    <Application binaryName="kitchenalia" dependencies="159917928||212784684||362164715||455109296||1604443259" environment="dirlist:FGLIMAGEPATH=$(ProjectDir)/images/app;$(ProjectDir)/images/android;$(ProjectDir)/images/ios;$(ProjectDir)/images;$(FGLDIR)/lib/image2font.txt;$(FGLDIR)/lib;$(FGLIMAGEPATH)" id="400358049" label="kitchenalia">
+    <Application binaryName="kitchenalia" dependencies="159917928||212784684||362164715||455109296||1604443259" environment="dirlist:FGLIMAGEPATH=$(ProjectDir)/images/app;$(ProjectDir)/images/android;$(ProjectDir)/images/ios;$(ProjectDir)/images;/Volumes/Daily/github/FourjsGenero/kitchenalia/trunk;$(FGLDIR)/lib/image2font.txt;$(FGLDIR)/lib;$(FGLIMAGEPATH)" id="400358049" label="kitchenalia">
       <VirtualFolder label="forms">
         <File filePath="src/catalog.per"/>
         <File filePath="src/catalog_detail.per"/>
@@ -144,6 +144,17 @@
         <File filePath="src/product_group_list.per"/>
         <File filePath="src/settings.per"/>
         <File filePath="src/sync.per"/>
+      </VirtualFolder>
+      <VirtualFolder label="import">
+        <File excludeFromLink="true" filePath="src/browser.4gl"/>
+        <File filePath="src/browser.per"/>
+        <File filePath="src/chart.per"/>
+        <File excludeFromLink="true" filePath="src/gc_column.4gl"/>
+        <File excludeFromLink="true" filePath="src/gc_gauge.4gl"/>
+        <File excludeFromLink="true" filePath="src/gc_geo.4gl"/>
+        <File excludeFromLink="true" filePath="src/gc_line.4gl"/>
+        <File excludeFromLink="true" filePath="src/gc_org.4gl"/>
+        <File excludeFromLink="true" filePath="src/gc_pie.4gl"/>
       </VirtualFolder>
       <VirtualFolder label="lib">
         <File filePath="src/lib_error.4gl"/>

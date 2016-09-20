@@ -146,39 +146,71 @@ end function
 FUNCTION db_create_tables()
     WHENEVER ERROR STOP
 
-  EXECUTE IMMEDIATE "CREATE TABLE product (
+ EXECUTE IMMEDIATE "CREATE TABLE product (
         pr_code CHAR(8) NOT NULL,
         pr_desc VARCHAR(80) NOT NULL,
-        pr_pg_code CHAR(2) NOT NULL,
+        pr_pg_code CHAR(3) NOT NULL,
         pr_price DECIMAL(11,2),
         pr_barcode VARCHAR(20),
+        pr_su_code CHAR(8),
         CONSTRAINT pk_product_1 PRIMARY KEY(pr_code),
         CONSTRAINT fk_product_product_group_1 FOREIGN KEY(pr_pg_code)
-            REFERENCES product_group(pg_code))"
-    EXECUTE IMMEDIATE "CREATE TABLE product_image (
-        pi_pr_code CHAR(8) NOT NULL,
-        pi_idx INTEGER NOT NULL,
-        pi_filename VARCHAR(80) NOT NULL,
-        CONSTRAINT pk_product_image_1 PRIMARY KEY(pi_pr_code, pi_idx),
-        CONSTRAINT fk_product_image_product_1 FOREIGN KEY(pi_pr_code)
-            REFERENCES product(pr_code))"
+            REFERENCES product_group(pg_code),
+        CONSTRAINT fk_product_supplier_1 FOREIGN KEY(pr_su_code)
+            REFERENCES supplier(su_code))"
     EXECUTE IMMEDIATE "CREATE TABLE product_group (
-        pg_code CHAR(2) NOT NULL,
+        pg_code CHAR(3) NOT NULL,
         pg_desc VARCHAR(80) NOT NULL,
         CONSTRAINT pk_product_group_1 PRIMARY KEY(pg_code))"
+    EXECUTE IMMEDIATE "CREATE TABLE settings (
+        url VARCHAR(80),
+        device_prefix CHAR(2),
+        next_customer INTEGER,
+        next_order INTEGER)"
+    EXECUTE IMMEDIATE "CREATE TABLE supplier (
+        su_code CHAR(8) NOT NULL,
+        su_name VARCHAR(80) NOT NULL,
+        su_address VARCHAR(255),
+        su_city VARCHAR(80),
+        su_state CHAR(2),
+        su_country VARCHAR(80),
+        su_postcode CHAR(10),
+        su_phone CHAR(15),
+        su_mobille CHAR(15),
+        su_email VARCHAR(30),
+        su_website VARCHAR(40),
+        su_lat DECIMAL(10,6),
+        su_lon DECIMAL(10,6),
+        CONSTRAINT pk_supplier_1 PRIMARY KEY(su_code))"
     EXECUTE IMMEDIATE "CREATE TABLE customer (
-        cu_code CHAR(10) NOT NULL,
+        cu_code CHAR(8) NOT NULL,
         cu_name VARCHAR(80) NOT NULL,
         cu_address VARCHAR(255),
         cu_city VARCHAR(80),
         cu_state CHAR(2),
         cu_country VARCHAR(80),
         cu_postcode CHAR(10),
-        CONSTRAINT pk_customer_1 PRIMARY KEY(cu_code))"
+        cu_phone CHAR(15),
+        cu_mobile CHAR(15),
+        cu_email VARCHAR(30),
+        cu_website VARCHAR(40),
+        cu_lat DECIMAL(10,6),
+        cu_lon DECIMAL(10,6),
+        CONSTRAINT pk_customer_1_1 PRIMARY KEY(cu_code))"
+    EXECUTE IMMEDIATE "CREATE TABLE product_image (
+        pi_pr_code CHAR(8) NOT NULL,
+        pi_idx INTEGER NOT NULL,
+        pi_filename VARCHAR(80) NOT NULL,
+        pi_changed DATETIME YEAR TO SECOND NOT NULL,
+        CONSTRAINT pk_product_image_1_1 PRIMARY KEY(pi_pr_code, pi_idx),
+        CONSTRAINT fk_product_image_product_1_1 FOREIGN KEY(pi_pr_code)
+            REFERENCES product(pr_code))"
     EXECUTE IMMEDIATE "CREATE TABLE order_header (
         oh_code CHAR(10) NOT NULL,
-        oh_cu_code CHAR(10) NOT NULL,
+        oh_cu_code CHAR(8) NOT NULL,
         oh_order_date DATE NOT NULL,
+        oh_year SMALLINT,
+        oh_month SMALLINT,
         oh_upload DATETIME YEAR TO SECOND,
         oh_order_value DECIMAL(11,2),
         oh_delivery_name VARCHAR(80),
@@ -187,7 +219,7 @@ FUNCTION db_create_tables()
         oh_delivery_state CHAR(2),
         oh_delivery_country VARCHAR(80),
         oh_delivery_postcode CHAR(10),
-        CONSTRAINT pk_order_header_1 PRIMARY KEY(oh_code),
+        CONSTRAINT pk_order_header_1_1 PRIMARY KEY(oh_code),
         CONSTRAINT fk_order_header_customer_1 FOREIGN KEY(oh_cu_code)
             REFERENCES customer(cu_code))"
     EXECUTE IMMEDIATE "CREATE TABLE order_line (
@@ -197,16 +229,11 @@ FUNCTION db_create_tables()
         ol_qty DECIMAL(11,2) NOT NULL,
         ol_price DECIMAL(11,2) NOT NULL,
         ol_line_value DECIMAL(11,2) NOT NULL,
-        CONSTRAINT pk_order_line_1 PRIMARY KEY(ol_oh_code, ol_idx),
-        CONSTRAINT fk_order_line_order_header_1 FOREIGN KEY(ol_oh_code)
+        CONSTRAINT pk_order_line_1_1 PRIMARY KEY(ol_oh_code, ol_idx),
+        CONSTRAINT fk_order_line_order_header_1_1 FOREIGN KEY(ol_oh_code)
             REFERENCES order_header(oh_code),
-        CONSTRAINT fk_order_line_product_1 FOREIGN KEY(ol_pr_code)
+        CONSTRAINT fk_order_line_product_1_1 FOREIGN KEY(ol_pr_code)
             REFERENCES product(pr_code))"
-    EXECUTE IMMEDIATE "CREATE TABLE settings (
-        url VARCHAR(80),
-        device_prefix CHAR(2),
-        next_customer INTEGER,
-        next_order INTEGER)"
 
 END FUNCTION
 
@@ -219,6 +246,7 @@ FUNCTION db_add_indexes()
     EXECUTE IMMEDIATE "CREATE INDEX idx_product_1 ON product(pr_desc, pr_code)"
     EXECUTE IMMEDIATE "CREATE INDEX idx_product_2 ON product(pr_pg_code, pr_code)"
     EXECUTE IMMEDIATE "CREATE INDEX idx_product_group_1 ON product_group(pg_desc, pg_code)"
-    EXECUTE IMMEDIATE "CREATE INDEX idx_customer_1 ON customer(cu_name, cu_code)"
+    EXECUTE IMMEDIATE "CREATE INDEX idx_supplier_1 ON supplier(su_name, su_code)"
+    EXECUTE IMMEDIATE "CREATE INDEX idx_customer_1_1 ON customer(cu_name, cu_code)"
 
 END FUNCTION

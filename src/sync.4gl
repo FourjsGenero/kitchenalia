@@ -38,7 +38,7 @@ define l_ok boolean
 define l_err_text string
     menu 
         on action fullsync
-            call full_sync() returning l_ok, l_err_text
+            call full_sync(true) returning l_ok, l_err_text
             if l_ok then
                 call show_message(l_err_text, true)
                 call product_group_list.db_populate()
@@ -49,7 +49,16 @@ define l_err_text string
                 call show_error(l_err_text, true)
             end if
         on action partialsync
-            call not_implemented_dialog()
+            call full_sync(false) returning l_ok, l_err_text
+            if l_ok then
+                call show_message(l_err_text, true)
+                call product_group_list.db_populate()
+                call product_group_list.ui_populate()
+                call product_list.db_populate()
+                call product_list.ui_populate()
+            else
+                call show_error(l_err_text, true)
+            end if
         on action uploadsync
             call not_implemented_dialog()
         on action register
@@ -64,7 +73,8 @@ end dialog
 
 
 
-function full_sync()
+function full_sync(l_images_flg)
+define l_images_flg boolean
 define l_ok boolean
 define l_err_text string
 define l_pr_code like product.pr_code
@@ -80,6 +90,12 @@ define l_pi_filename like product_image.pi_filename
         call refresh_product_group() returning l_ok, l_err_text
     end if
     if l_ok then
+        call refresh_customer() returning l_ok, l_err_text
+    end if
+    if l_ok then
+        call refresh_supplier() returning l_ok, l_err_text
+    end if
+    if l_ok then
         call refresh_product() returning l_ok, l_err_text
     end if
     if l_ok then
@@ -90,24 +106,24 @@ define l_pi_filename like product_image.pi_filename
 
         foreach product_list_curs into l_pr_code
             call refresh_product_image(l_pr_code) returning l_ok, l_err_text
-            if l_ok then
-                foreach product_list_image_curs using l_pr_code into l_pi_filename
-                    call refresh_product_image_filename(l_pi_filename) returning l_ok, l_err_text
-                    if not l_ok then
-                        exit foreach
-                    end if
-                end foreach
-            else
-                exit foreach
+            if l_images_flg then
+                if l_ok then
+                    foreach product_list_image_curs using l_pr_code into l_pi_filename
+                        call refresh_product_image_filename(l_pi_filename) returning l_ok, l_err_text
+                        if not l_ok then
+                            exit foreach
+                        end if
+                    end foreach
+                else
+                    exit foreach
+                end if
             end if
         end foreach
         
     end if
 
     
-    --if l_ok then 
-        --call refresh_customer() returning l_ok, l_err_text
-    --end if
+   
     --if l_ok then
         --call refresh_job_header() returning l_ok, l_err_text
     --end if
@@ -257,6 +273,104 @@ define l_product_rec record like product.*
         for i = 1 to j_resp.results.getLength()
             let l_product_rec.* = j_resp.results[i].*
             insert into product values (l_product_rec.*)
+        end for
+        --let m_count.product = j_resp.results.getLength()
+    catch
+        rollback work
+        return false, sqlca.sqlerrm
+    end try
+    commit work
+    return true, ""
+end function
+
+
+
+private function refresh_customer()
+define l_url string
+
+define req com.HttpRequest
+define resp com.HttpResponse
+
+define j util.JSONObject
+define s string
+
+define j_resp record
+    count float,
+    results dynamic array of record like customer.*
+end record
+define i integer
+define l_customer_rec record like customer.*
+
+    let l_url = "http://localhost:8096/ws/r/kitchenalia/get_customer"
+    
+    let req = com.HttpRequest.create(l_url)
+    call req.doRequest()
+    let resp = req.getResponse()
+    if resp.getStatusCode() = 200 then
+        #ok
+    else
+        return false, resp.getStatusDescription()
+    end if
+    
+    let s = resp.getTextResponse()
+    #display util.json.proposetype(s)
+    let j = util.JSONObject.parse(s)
+    call j.toFGL(j_resp)
+    begin work
+    try
+        #TODO keep customer records not upload?
+        delete from customer where 1=1
+        for i = 1 to j_resp.results.getLength()
+            let l_customer_rec.* = j_resp.results[i].*
+            insert into customer values (l_customer_rec.*)
+        end for
+        --let m_count.product = j_resp.results.getLength()
+    catch
+        rollback work
+        return false, sqlca.sqlerrm
+    end try
+    commit work
+    return true, ""
+end function
+
+
+private function refresh_supplier()
+define l_url string
+
+define req com.HttpRequest
+define resp com.HttpResponse
+
+define j util.JSONObject
+define s string
+
+define j_resp record
+    count float,
+    results dynamic array of record like supplier.*
+end record
+define i integer
+define l_supplier_rec record like supplier.*
+
+    let l_url = "http://localhost:8096/ws/r/kitchenalia/get_supplier"
+    
+    let req = com.HttpRequest.create(l_url)
+    call req.doRequest()
+    let resp = req.getResponse()
+    if resp.getStatusCode() = 200 then
+        #ok
+    else
+        return false, resp.getStatusDescription()
+    end if
+    
+    let s = resp.getTextResponse()
+    #display util.json.proposetype(s)
+    let j = util.JSONObject.parse(s)
+    call j.toFGL(j_resp)
+    begin work
+    try
+        delete from supplier where 1=1
+        for i = 1 to j_resp.results.getLength()
+            let l_supplier_rec.* = j_resp.results[i].*
+            insert into supplier values (l_supplier_rec.*)
         end for
         --let m_count.product = j_resp.results.getLength()
     catch

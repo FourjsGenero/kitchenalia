@@ -20,6 +20,11 @@ dialog d_home()
             call display_image()
         on action about
             call fgl_winmessage(%"about.title",%"about.text","info")
+        on action fourjs
+            call ui.Interface.frontCall("standard","launchurl","http://www.4js.com",[])
+        on action tramontina
+            call ui.Interface.frontCall("standard","launchurl","http://www.tramontina.com.br/home/index/language/en",[])
+        
     end menu
 end dialog
 
