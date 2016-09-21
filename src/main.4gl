@@ -1,5 +1,6 @@
 import fgl home
 import fgl catalog
+import fgl customer_book
 import fgl order
 import fgl customer_list
 import fgl sync
@@ -53,6 +54,9 @@ define l_err_text string
 
         on action catalog 
             call catalog.execute()
+
+        on action customer_book
+            call customer_book.execute()
 
         on action order 
             call order.execute()

@@ -136,6 +136,8 @@
       <VirtualFolder label="forms">
         <File filePath="src/catalog.per"/>
         <File filePath="src/catalog_detail.per"/>
+        <File filePath="src/customer_book.per"/>
+        <File filePath="src/customer_book_detail.per"/>
         <File filePath="src/customer_grid.per"/>
         <File filePath="src/customer_list.per"/>
         <File filePath="src/home.per"/>
@@ -148,7 +150,9 @@
       <VirtualFolder label="import">
         <File excludeFromLink="true" filePath="src/browser.4gl"/>
         <File filePath="src/browser.per"/>
-        <File filePath="src/chart.per"/>
+        <File filePath="src/chart_column.per"/>
+        <File filePath="src/chart_line.per"/>
+        <File filePath="src/chart_pie.per"/>
         <File excludeFromLink="true" filePath="src/gc_column.4gl"/>
         <File excludeFromLink="true" filePath="src/gc_gauge.4gl"/>
         <File excludeFromLink="true" filePath="src/gc_geo.4gl"/>
@@ -161,7 +165,9 @@
         <File filePath="src/lib_ui.4gl"/>
       </VirtualFolder>
       <File excludeFromLink="true" filePath="src/catalog.4gl"/>
+      <File excludeFromLink="true" filePath="src/chart.4gl"/>
       <File excludeFromLink="true" filePath="src/customer.4gl"/>
+      <File excludeFromLink="true" filePath="src/customer_book.4gl"/>
       <File excludeFromLink="true" filePath="src/customer_grid.4gl"/>
       <File excludeFromLink="true" filePath="src/customer_list.4gl"/>
       <File excludeFromLink="true" filePath="src/home.4gl"/>

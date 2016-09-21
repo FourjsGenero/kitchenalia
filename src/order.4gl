@@ -50,6 +50,9 @@ function execute()
         let m_toggle = "oh_code"
         call db_populate()
         call ui_populate()
+    ELSE
+        call db_populate()
+        call ui_populate()
     END IF 
     current window is order
 end function

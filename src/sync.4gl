@@ -17,7 +17,7 @@ schema kitchenalia
 --end record
 
 
-
+define m_progress string
 
 
 private function exception()
@@ -36,6 +36,7 @@ end function
 dialog sync()
 define l_ok boolean
 define l_err_text string
+    
     menu 
         on action fullsync
             call full_sync(true) returning l_ok, l_err_text
@@ -80,6 +81,7 @@ define l_err_text string
 define l_pr_code like product.pr_code
 define l_pi_filename like product_image.pi_filename
 
+    call clear_progress()
     if not test_connected() then
         return false, "Must be connected to internet"
     end if
@@ -87,18 +89,23 @@ define l_pi_filename like product_image.pi_filename
     --initialize m_count.* to null
     let l_ok = true
     if l_ok then
+        call display_progress("Refreshing Product Groups")
         call refresh_product_group() returning l_ok, l_err_text
     end if
     if l_ok then
+        call display_progress("Refreshing Customers")
         call refresh_customer() returning l_ok, l_err_text
     end if
     if l_ok then
+        call display_progress("Refreshing Suppliers")
         call refresh_supplier() returning l_ok, l_err_text
     end if
     if l_ok then
+        call display_progress("Refreshing Products")
         call refresh_product() returning l_ok, l_err_text
     end if
     if l_ok then
+        call display_progress("Refreshing Product Images")
         declare product_list_curs cursor with hold from
         "select pr_code from product order by pr_code"
         declare product_list_image_curs cursor with hold from
@@ -121,6 +128,8 @@ define l_pi_filename like product_image.pi_filename
         end foreach
         
     end if
+
+    call display_progress("Finished")
 
     
    
@@ -492,6 +501,7 @@ define i integer
 define l_product_rec record like product.*
 define l_device_id string
 
+    call clear_progress()
     call ui.interface.frontCall("standard","feinfo","deviceId", l_device_id)
     if l_device_id is null then
         return false,"Unable to determine device id"
@@ -515,6 +525,7 @@ define l_device_id string
 
     if j_resp.count = 1 then
         call settings.register(j_resp.results[1].dr_idx)
+        call display_progress("Device Registered")
         return true,""
     else
         return false,"Unable to register device"
@@ -542,6 +553,66 @@ define resp com.HttpResponse
     end try
     -- ignore response
 end function
+
+
+
+function download_orders(l_cu_code)
+define l_cu_code like customer.cu_code
+define l_url string
+
+define req com.HttpRequest
+define resp com.HttpResponse
+
+define j util.JSONObject
+define s string
+
+define j_resp record
+    count float,
+    results dynamic array of record 
+        order record like order_header.*,
+        lines dynamic array of record like order_line.*
+    end record
+end record
+define i,l integer
+
+define l_order_header_rec record like order_header.*
+define l_order_line_rec record like order_line.*
+
+    let l_url = SFMT("%1/ws/r/kitchenalia/get_order?cu_code=%2", settings.m_rec.url,  l_cu_code)
+    
+    let req = com.HttpRequest.create(l_url)
+    call req.doRequest()
+    let resp = req.getResponse()
+    if resp.getStatusCode() = 200 then
+        #ok
+    else
+        return false, resp.getStatusDescription()
+    end if
+    
+    let s = resp.getTextResponse()
+    #display util.json.proposetype(s)
+    let j = util.JSONObject.parse(s)
+    call j.toFGL(j_resp)
+    begin work
+    try
+        for i = 1 to j_resp.results.getLength()
+            let l_order_header_rec.* = j_resp.results[i].order.*
+            insert into order_header values (l_order_header_rec.*)
+
+            for l = 1 to j_resp.results[i].lines.getLength()
+                let l_order_line_rec.* = j_resp.results[i].lines[l].*
+                insert into order_line values (l_order_line_rec.*)
+            end for
+        end for
+        --let m_count.product = j_resp.results.getLength()
+    catch
+        rollback work
+        return false, sqlca.sqlerrm
+    end try
+    commit work
+    return true, ""
+end function
+
 
 
 
@@ -793,4 +864,21 @@ define l_ipaddress string
         return true
     end if
     return false
+end function
+
+
+
+function clear_progress()
+    initialize m_progress to null
+    display m_progress to progress
+    call ui.interface.refresh()
+end function
+
+function display_progress(l_text)
+define l_text string
+
+    let m_progress =  m_progress.append("\n")
+    let m_progress =  m_progress.append(l_text)
+    display m_progress to progress
+    call ui.Interface.refresh()
 end function

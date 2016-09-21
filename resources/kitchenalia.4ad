@@ -70,6 +70,10 @@
         <LStr text="action.catalog.text" /> 
     </ActionDefault>
 
+     <ActionDefault name="customer_book" text="Customer Book" image="fa-user" >
+        <LStr text="action.customer_book.text" /> 
+    </ActionDefault>
+
       <ActionDefault name="fullsync" text="Full Sync"  >
         <LStr text="action.fullsync.text" />
     </ActionDefault>

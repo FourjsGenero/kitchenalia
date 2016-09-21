@@ -1,4 +1,5 @@
 "action.catalog.text"  = "Catalog"
+"action.customer_book.text"  = "Customers"
 "action.home.text"     = "Home"
 
 "action.sort.text"    = "Sort"
@@ -31,6 +32,7 @@
 "field.next_order.comment" = "Enter the next number to give to orders"
 
 "window.catalog.title" = "Catalog"
+"window.customer_book.title" = "Customers"
 "window.order.title" = "Orders"
 "window.home.title"    = "Kitchenalia"
 "window.settings.title" = "Settings"

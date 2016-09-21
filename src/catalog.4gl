@@ -1,7 +1,8 @@
 import fgl product_group_list
 import fgl product
 import fgl browser
-import fgl gc_line
+import fgl chart
+
 
 schema kitchenalia
 
@@ -13,6 +14,7 @@ define m_arr dynamic array of record
     img string,
     pr_code like product.pr_code
 end record
+define m_pr_code like product.pr_code
 
 define wl, wg ui.window
 define f ui.form
@@ -70,7 +72,8 @@ define i integer
         before row
             current window is catalog_detail
             terminate dialog catalog_detail
-             
+
+            let m_pr_code = m_arr[arr_curr()].pr_code
             call wg.setText(m_arr[arr_curr()].major)
             call display_product(arr_curr())
             start dialog catalog_detail
@@ -127,6 +130,9 @@ define i integer
                     let m_orderby = "pr_code"
                 on action desc attributes(text="Description")
                     let m_orderby = "pr_desc desc"
+                #TODO this need sales on product field
+                #on action sales attributes(text="Sales)
+                    
                 on action cancel
                     let l_popup_value_select = false
             end menu
@@ -171,6 +177,8 @@ dialog catalog_detail()
 define wc string
 define l_ol_rec record like order_line.*
 define result string
+define ok boolean
+define err_text string
 
     input by name wc, l_ol_rec.ol_qty
         on change ol_qty
@@ -210,7 +218,8 @@ define result string
             end menu
 
         on action chart
-            call do_chart()
+            #TODO add test connected, or shall we do in library?
+            call chart.line_product_sales(m_pr_code) returning ok, err_text
     end input
 end dialog
 
@@ -246,7 +255,7 @@ define l_rec product_type
 
     
     call m_product_arr.clear()
-    let l_sql = "select * from product"
+    let l_sql = "select product.* from product"
     if m_filter.getlength() > 0 then
         let l_sql = l_sql, " where ", m_filter
     end if
@@ -258,121 +267,5 @@ define l_rec product_type
         let m_product_arr[m_product_arr.getlength()+1].* = l_rec.*
     end foreach
 end function
-
-function do_chart()
-define l_arr dynamic array of record
-    month integer,
-    value like order_line.ol_line_value
-end record
-define g gc_line.line_rec
-define wc string
-
-    open window chart with form "chart" attributes(style="dialog")
-     IF NOT gc_line.is_loaded("formonly.wc",15) THEN
-        CALL show_error("Problem loading Web Component",true)
-        CLOSE WINDOW chart
-        RETURN
-    END IF
-
-    
-    INITIALIZE g.* TO NULL
-    LET g.chart_area.left = 50
-    LET g.chart_area.top = 50
-    LET g.chart_area.height = 800
-    LET g.chart_area.width = 800
-    LET g.height = 1000
-    LET g.width = 1000
-    LET g.colors[1] = "#3366CC"
-    LET g.colors[2] = "#DC3912"
-    LET g.colors[3] = "#FF9900"
-    LET g.colors[4] = "#109618"
-    LET g.colors[5] = "#990099"
-    LET g.colors[6] = "#3B3EAC"
-    LET g.colors[7] = "#0099C6"
-    LET g.colors[8] = "#DD4477"
-    LET g.colors[9] = "#66AA00"
-    LET g.colors[10] = "#B82E2E"
-    LET g.colors[11] = "#316395"
-    LET g.colors[12] = "#994499"
-    LET g.colors[13] = "#22AA99"
-    LET g.colors[14] = "#AAAA11"
-    LET g.colors[15] = "#6633CC"
-    LET g.colors[16] = "#E67300"
-    LET g.colors[17] = "#8B0707"
-    LET g.colors[18] = "#329262"
-    LET g.colors[19] = "#5574A6"
-    LET g.colors[20] = "#3B3EAC"
-
-    LET g.line_dash_style[1] = 1
-    LET g.line_dash_style[2] = 0
-
-    let g.title = "Sample Line"
-    
-    let l_arr[1].month = 1
-    let l_arr[1].value = 100
-    let l_arr[2].month = 2
-    let l_arr[2].value = 200
-    let l_arr[3].month = 3
-    let l_arr[3].value = 300
-    
-    INPUT BY NAME wc ATTRIBUTES(WITHOUT DEFAULTS=TRUE, ACCEPT=FALSE) 
-        BEFORE INPUT
-            LET g.data_col_count = 2
-            LET g.data_column[1].label = "Month"
-            LET g.data_column[2].label ="Sales"
-            LET g.data_column[1].type = "string"
-            LET g.data_column[2].type = "number"
-            CALL map_array_to_data(base.TypeInfo.create(l_arr), g.data, "month,value")
-            DISPLAY g.data[1,1]
-            DISPLAY g.data[3,2]
-            LET g.data_row_count = l_arr.getLength()
-            CALL gc_line.draw("formonly.wc", g.*)
-            
-        ON ACTION close
-            EXIT INPUT
-    END INPUT
-    close window chart
-
-end function
-
--- Take a 4gl array and map to data for passing to web component
--- Note: array is passed in via base.Typeinfo.create(array_name)
-PRIVATE FUNCTION map_array_to_data(n, d,  column_list)
-DEFINE n om.DomNode
-DEFINE d DYNAMIC ARRAY WITH DIMENSION 2 OF STRING
-DEFINE column_list STRING
-
-DEFINE r om.DomNode
-DEFINE i,j INTEGER
-DEFINE tok base.StringTokenizer
-
-    CALL d.clear()
-    FOR i = 1 TO n.getChildCount()
-        LET r = n.getChildByIndex(i)
-        LET j = 0
-        LET tok = base.StringTokenizer.create(column_list,",")
-        WHILE tok.hasMoreTokens()
-            LET j = j + 1
-            LET d[i,j] = get_record_node(r,tok.nextToken())
-        END WHILE
-    END FOR
-END FUNCTION
-
-PRIVATE FUNCTION get_record_node(r,c)
-DEFINE r om.DomNode
-DEFINE nl om.NodeList
-DEFINE f om.DomNode
-DEFINE c STRING
-
-    LET nl = r.selectByPath(SFMT("//Field[@name='%1']",c))
-    IF nl.getLength() != 1 THEN
-        RETURN NULL
-    ELSE
-        LET f = nl.item(1)
-        RETURN f.getAttribute("value")
-    END IF
-END FUNCTION
-
-
 
 

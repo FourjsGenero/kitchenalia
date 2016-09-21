@@ -12,6 +12,7 @@ function execute()
 end function
 
 dialog d_home()
+define l_choice string
 
    menu
         before menu
@@ -19,25 +20,33 @@ dialog d_home()
         on action windowresized
             call display_image()
         on action about
-            call fgl_winmessage(%"about.title",%"about.text","info")
-        on action fourjs
-            call ui.Interface.frontCall("standard","launchurl","http://www.4js.com",[])
-        on action tramontina
-            call ui.Interface.frontCall("standard","launchurl","http://www.tramontina.com.br/home/index/language/en",[])
-        
+            menu "" attributes(style="dialog", comment=%"about.text")
+                on action fourjs attributes(text="Visit 4Js Website")
+                    let l_choice = "fourjs"
+                on action generomobile attributes(text="Visit GeneroMobile Website")
+                    let l_choice = "generomobile"
+                on action tramontina attributes(text="Visit Tramontina Website")
+                    let l_choice = "tramontina"
+                on action cancel
+                    let l_choice = ""
+                    exit menu
+            end menu
+            case l_choice
+                when "fourjs"
+                    call ui.Interface.frontCall("standard","launchurl","http://www.4js.com",[])
+                when "generomobile"
+                    call ui.Interface.frontCall("standard","launchurl","http://www.generomobile.com",[])
+                when "tramontina"
+                    call ui.Interface.frontCall("standard","launchurl","http://www.tramontina.com.br/home/index/language/en",[])
+            end case
     end menu
 end dialog
 
 function display_image()
-define l_size string
 define l_width, l_height integer
-define l_pos integer
-    CALL ui.Interface.frontCall("standard","feInfo",["windowSize"],[l_size])
-    let l_pos = l_size.getIndexOf("x",1)
-    let l_width = l_size.subString(1,l_pos-1)
-    let l_height = l_size.subString(l_pos+1, l_size.getLength())
+    call window_size() returning l_width, l_height
     if l_width > l_height then
-        display "ios/ipad/kitchenalia-Landscape@2x.png" to splash
+        display "ios/ipad/kitchenalia-Landscape.png" to splash
     else #TODO Use 2x image when avail
         display "ios/ipad/kitchenalia-Portrait.png" to splash
     end if

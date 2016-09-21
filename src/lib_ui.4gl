@@ -73,3 +73,15 @@ end function
 function confirm_cancel_dialog()
     return confirm_dialog("Are you sure you want to cancel?  You will lose your changes")
 end function
+
+
+function window_size()
+define l_size string
+define l_pos, l_width, l_height integer
+
+    CALL ui.Interface.frontCall("standard","feInfo",["windowSize"],[l_size])
+    let l_pos = l_size.getIndexOf("x",1)
+    let l_width = l_size.subString(1,l_pos-1)
+    let l_height = l_size.subString(l_pos+1, l_size.getLength())
+    return l_width, l_height
+end function
