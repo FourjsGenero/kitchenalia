@@ -1,6 +1,7 @@
 import fgl gc_line
 import fgl gc_column
 import fgl gc_pie
+import fgl gc_geo
 import fgl settings
 import com
 import util
@@ -485,6 +486,98 @@ define i integer
     close window chart
     return true, ""
 
+end function
+
+
+
+function map_total_sales()
+define l_url string
+define req com.HttpRequest
+define resp com.HttpResponse
+define s string
+define j util.JSONObject
+define j_resp record 
+    count FLOAT,
+    results DYNAMIC ARRAY OF RECORD
+        cu_lat FLOAT,
+        cu_lon FLOAT,
+        total_value FLOAT
+    END RECORD
+END RECORD
+define g gc_geo.geo_rec
+define l_arr dynamic array of record
+    cu_lat like customer.cu_lat,
+    cu_lon like customer.cu_lon,
+    value like order_line.ol_line_value
+end record
+define wc string
+define i integer
+
+    let l_url = sfmt("%1/ws/r/kitchenalia/get_latlon_analysis", settings.m_rec.url)
+    
+    let req = com.HttpRequest.create(l_url)
+    call req.doRequest()
+    let resp = req.getResponse()
+    if resp.getStatusCode() = 200 then
+        #ok
+    else
+        return false, resp.getStatusDescription()
+    end if
+    
+    let s = resp.getTextResponse()
+    let j = util.JSONObject.parse(s)
+    call j.toFGL(j_resp)
+    display j.toString()
+    for i = 1 to j_resp.results.getLength()
+        let l_arr[i].cu_lat = j_resp.results[i].cu_lat
+        let l_arr[i].cu_lon = j_resp.results[i].cu_lon
+        let l_arr[i].value = j_resp.results[i].total_value
+    end for
+
+     open window chart with form "chart_geo" attributes(style="dialog")
+     IF NOT gc_column.is_loaded("formonly.wc",15) THEN
+        CALL show_error("Problem loading Web Component",true)
+        CLOSE WINDOW chart
+        RETURN false, ""
+    END IF
+
+    INITIALIZE g.* TO NULL
+    
+    call window_size() returning g.width, g.height
+    
+    LET g.data_column[1].label = "Latitude"
+    LET g.data_column[1].type = "number"
+
+    LET g.data_column[2].label = "Longitude"
+    LET g.data_column[2].type = "number"
+
+    LET g.data_column[3].label = "Sales"
+    LET g.data_column[3].type = "number"
+
+    
+   
+    LET g.data_col_count = g.data_column.getLength()
+    LET g.data_row_count = l_arr.getLength()
+
+    LET g.region = "BR"
+    LET g.display_mode = "markers"
+
+    LET g.color_axis.colors[1] = "#693D17"
+    LET g.color_axis.colors[2] = "#F3DCB9"
+
+    CALL map_array_to_data(base.TypeInfo.create(l_arr), g.data, "cu_lat,cu_lon,value")
+    LET g.data_row_count = l_arr.getLength()
+    
+    INPUT BY NAME wc ATTRIBUTES(WITHOUT DEFAULTS=TRUE, CANCEL=FALSE) 
+        BEFORE INPUT
+            
+            CALL gc_geo.draw("formonly.wc", g.*)
+            
+        ON ACTION close
+            EXIT INPUT
+    END INPUT
+    close window chart
+    return true, ""
 end function
 
 

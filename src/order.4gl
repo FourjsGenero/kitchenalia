@@ -2,6 +2,7 @@ import fgl customer_list
 import fgl customer
 import fgl customer_grid
 import fgl product
+import fgl chart
 
 schema kitchenalia
 
@@ -191,19 +192,26 @@ define i integer
 end function
 
 dialog order_detail()
-define wc string
+define ok boolean
+define l_err_text string
 
     display array m_arr_line to scr.*
         on action edit
 
-        on action filter
+        --on action filter
 
-        on action toggle
+        --on action toggle
 
-        on action sort
+        --on action sort
 
         on action add_to_order
             current window is catalog 
+
+         on action chart_map 
+            call chart.map_total_sales() returning ok, l_err_text
+
+        #on action chart_line attributes(image="fa-line-chart")
+        #    call chart.line_total_sales()
     end display
 end dialog
 

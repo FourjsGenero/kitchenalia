@@ -1,0 +1,132 @@
+<html>  
+    <head>    
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>   
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+        <script type="text/javascript">
+
+   onICHostReady = function(version) {
+      var loaded;
+
+      if ( version != 1.0 ) {
+         alert('Invalid API version');
+         return;
+      }
+
+      loaded = "N";
+      
+      is_loaded = function() {
+            return loaded;
+      }
+
+      google.charts.load('current', {'packages':['geochart']});
+      google.charts.setOnLoadCallback(chart_loaded);
+
+      function chart_loaded() { 
+            loaded = "Y";
+       } 
+
+      draw_geo = function(p) {   
+   
+         properties = eval('(' + p + ')');
+        
+         var data = new google.visualization.DataTable();
+
+         var colLength = parseInt(properties.data_col_count);
+         var rowLength = parseInt(properties.data_row_count);
+
+         for (var k=0; k < colLength; k++) {
+            if (properties.data_column[k].label) {
+                data.addColumn(properties.data_column[k].type, properties.data_column[k].label);
+            }
+            else
+            {
+                var r = {};
+                r["type"] = properties.data_column[k].type;
+                r["role"] = properties.data_column[k].role;
+                data.addColumn(r);
+            }
+         }
+
+         data.addRows(rowLength);
+
+         for (var i=0; i < rowLength; i++) {
+            for (var j=0; j < colLength; j++) {
+                data.setValue(i,j, properties.data[i][j]);
+            }
+         }
+
+         var chart = new google.visualization.GeoChart(document.getElementById('chart_div'));   
+         
+         var options  = {
+
+                         backgroundColor: {
+                                            strokeWidth: properties.background_color.stroke_width,
+                                            stroke: properties.background_color.stroke,
+                                            fill: properties.background_color.fill
+                                           } ,
+                          colorAxis: {
+                            minValue: properties.color_axis.min_value,
+                            maxValue: properties.color_axis.max_value,
+                            values: properties.color_axis.values,
+                            colors: properties.color_axis.colors
+                          },
+                          datalessRegionColor: properties.dataless_region_color,
+                          defaultColor: properties.default_color,
+                          displayMode: properties.display_mode,
+                          domain: properties.domain,
+                          enableRegionInteractivity: properties.enable_region_interactivity,
+                          height: properties.height,
+                          keepAspectRatio: properties.keep_aspect_ratio,
+                          legend: {
+                                   numberFormat: properties.legend.number_format,
+                                   textStyle: {
+                                               color: properties.legend.text_style.color,
+                                               fontName: properties.legend.text_style.font_name,
+                                               fontSize: properties.legend.text_style.font_size,
+                                               bold: properties.legend.text_style.bold,
+                                               italic: properties.legend.text_style.italic
+                                               }
+                                  } ,
+                          magnifyingGlass: {
+                                enable: properties.magnifying_glass.enable,
+                                zoom_factor: properties.magnifying_glass.zoom_factor
+                          },
+                          markerOpacity: properties.marker_opacity,
+                          region: properties.region,
+                          resolution: properties.resolution,
+                          sizeAxis: {
+                              minSize: properties.size_axis.min_size,
+                              maxSize: properties.size_axis.max_size,
+                              minValue: properties.size_axis.min_value,
+                              maxValue: properties.size_axis.max_value
+                          },
+                          tooltip: {
+                                    ignoreBounds: properties.tooltip.ignore_bounds,
+                                    isHtml: properties.tooltip.is_html,
+                                    showColorCode: properties.tooltip.show_color_code,
+                                    text: properties.tooltip.text,
+                                    textStyle: {
+                                                color: properties.tooltip.text_style.color,
+                                                fontName: properties.tooltip.text_style.font_name,
+                                                fontSize: properties.tooltip.text_style.font_size,
+                                                bold: properties.tooltip.text_style.bold,
+                                                italic: properties.tooltip.text_style.italic
+                                               },
+                                    trigger: properties.tooltip.trigger
+                          },
+                          width: properties.width
+         };
+
+         chart.draw(data, options); 
+    }
+
+   }
+
+
+   </script>
+   </head>  
+   <body>  
+      <div id='chart_div'></div>  
+   </body>
+</html>

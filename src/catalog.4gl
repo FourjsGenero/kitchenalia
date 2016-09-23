@@ -2,6 +2,8 @@ import fgl product_group_list
 import fgl product
 import fgl browser
 import fgl chart
+import fgl wc_touchpad
+import util
 
 
 schema kitchenalia
@@ -14,6 +16,7 @@ define m_arr dynamic array of record
     img string,
     pr_code like product.pr_code
 end record
+define m_row integer
 define m_pr_code like product.pr_code
 
 define wl, wg ui.window
@@ -22,6 +25,11 @@ define f ui.form
 define m_toggle  string
 define m_filter  string
 define m_orderby string
+
+define m_img_list string
+define m_img_idx integer
+
+define m_first boolean
 
 
 private function exception()
@@ -74,9 +82,18 @@ define i integer
             terminate dialog catalog_detail
 
             let m_pr_code = m_arr[arr_curr()].pr_code
+            let m_row = arr_curr()
             call wg.setText(m_arr[arr_curr()].major)
             call display_product(arr_curr())
+            
             start dialog catalog_detail
+            if m_first then
+                call draw_img(m_img_idx)
+            else
+                let m_first = true
+                
+            end if
+            
             current window is catalog
             
         --on action toggle
@@ -163,24 +180,36 @@ end dialog
 function display_product(l_row)
 define l_row integer
 
+define result string
+
     display m_product_arr[l_row].pr_code to pr_code
     display m_product_arr[l_row].pr_desc to pr_desc
     display m_product_arr[l_row].pr_price to pr_price
     display m_product_arr[l_row].pr_barcode to pr_barcode
 
-   
-    #TODO change img
-    display "img/"||product.thumbnail_get( m_product_arr[l_row].pr_code) TO pi_filename
+    display product.image_list_get( m_product_arr[l_row].pr_code)
+    let m_img_list = product.image_list_get( m_product_arr[l_row].pr_code)
+
+    let m_img_idx = 1
+    #call draw_img(m_img_idx)
+
 end function
 
 dialog catalog_detail()
-define wc string
+define imglist string
 define l_ol_rec record like order_line.*
 define result string
 define ok boolean
 define err_text string
 
-    input by name wc, l_ol_rec.ol_qty
+define j_imglist string
+define a_imglist dynamic array of string
+
+define i integer
+
+    input by name imglist, l_ol_rec.ol_qty
+        before input
+            
         on change ol_qty
             let l_ol_rec.ol_line_value = l_ol_rec.ol_qty * l_ol_rec.ol_price
             update order_line
@@ -188,6 +217,21 @@ define err_text string
             ol_line_value = l_ol_rec.ol_line_value
             where ol_oh_code = ?
             and ol_idx = ?
+
+        on action next_img attributes(defaultview=no)
+            let m_img_idx = m_img_idx + 1
+            if m_img_idx > (m_img_list.getLength() -2) then
+                let m_img_idx = (m_img_list.getLength() -2)
+            end if
+            call draw_img(m_img_idx)
+
+        on action prev_img attributes(defaultview=no)
+            let m_img_idx = m_img_idx - 1
+            if m_img_idx < 1 then
+                let m_img_idx = 1
+            end if
+            call draw_img(m_img_idx)
+
 
         on action video
             call browser.browser("Video Example","https://www.youtube.com/watch?v=moYoyKxG3MM")
@@ -222,6 +266,41 @@ define err_text string
             call chart.line_product_sales(m_pr_code) returning ok, err_text
     end input
 end dialog
+
+
+
+private function draw_img(idx)
+define idx integer
+define l_img_list dynamic array of string
+
+    if m_img_list is not null then
+        call util.JSON.parse(m_img_list, l_img_list)
+    end if
+    
+    call wc_touchpad.init()
+    call wc_touchpad.init_grid(5,1)
+    
+    case
+        when l_img_list.getLength() = 0
+            # nothing
+        when l_img_list.getLength() = 1
+            call wc_touchpad.image_add2grid(3,1,1,1,ui.Interface.filenameToURI(l_img_list[1]),"")
+        when l_img_list.getLength() = 2
+            call wc_touchpad.image_add2grid(2,1,1,1,ui.Interface.filenameToURI(l_img_list[1]),"")
+            call wc_touchpad.image_add2grid(4,1,1,1,ui.Interface.filenameToURI(l_img_list[2]),"")
+        when l_img_list.getLength() = 3
+            call wc_touchpad.image_add2grid(2,1,1,1,ui.Interface.filenameToURI(l_img_list[1]),"")
+            call wc_touchpad.image_add2grid(3,1,1,1,ui.Interface.filenameToURI(l_img_list[2]),"")
+            call wc_touchpad.image_add2grid(4,1,1,1,ui.Interface.filenameToURI(l_img_list[3]),"") 
+        otherwise
+            call wc_touchpad.image_add2grid(1,1,1,1,"","prev_img")
+            call wc_touchpad.image_add2grid(2,1,1,1,ui.Interface.filenameToURI(l_img_list[1]),"")
+            call wc_touchpad.image_add2grid(3,1,1,1,ui.Interface.filenameToURI(l_img_list[idx+1]),"")
+            call wc_touchpad.image_add2grid(4,1,1,1,ui.Interface.filenameToURI(l_img_list[idx+2]),"")
+            call wc_touchpad.image_add2grid(5,1,1,1,"","next_img")
+    end case
+    call wc_touchpad.html_send("formonly.imglist")
+end function
 
 private function ui_populate()
 define i integer

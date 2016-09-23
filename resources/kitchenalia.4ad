@@ -89,11 +89,24 @@
         <LStr text="action.register.text" />
     </ActionDefault>
 
+     <ActionDefault name="db_status" text="Database Status"  image="fa-database" >
+        <LStr text="action.db_status.text" />
+    </ActionDefault>
+
      <ActionDefault name="video" text="Video" image="fa-video-camera"  >
         <LStr text="action.video.text" />
     </ActionDefault>
      <ActionDefault name="chart" text="Chart" image="fa-line-chart"  >
         <LStr text="action.chart.text" />
+    </ActionDefault>
+     <ActionDefault name="chart_map" text="Chart" image="fa-globe"  >
+        <LStr text="action.chart_map.text" />
+        </ActionDefault>
+    <ActionDefault name="chart_line" text="Chart" image="fa-line"  >
+        <LStr text="action.chart_line.text" />
+        </ActionDefault>
+         <ActionDefault name="chart_pie" text="Chart" image="fa-pie"  >
+        <LStr text="action.chart_pie.text" />
     </ActionDefault>
 </ActionDefaultList>
 

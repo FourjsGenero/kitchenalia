@@ -5,15 +5,16 @@ EDIT formonly.pr_code, TITLE="Code";
 EDIT formonly.pr_desc, TITLE="Desc";
 EDIT formonly.pr_price, TITLE="Price";
 EDIT formonly.pr_barcode, TITLE="Barcode";
-IMAGE formonly.pi_filename, TITLE="Image", HEIGHT=6;
-WEBCOMPONENT formonly.wc;
+WEBCOMPONENT formonly.imglist, COMPONENTTYPE="wc_touchpad", HEIGHT=6;
 BUTTON contact_supplier, TEXT="Contact Supplier";
 END
+
 GROUP (TEXT="Order")
 SPINEDIT formonly.ol_qty, TITLE="Quantity";
 EDIT formonly.ol_price, TITLE="Price";
 LABEL formonly.ol_line_value, TITLE="Value";
 BUTTON add, TEXT="Add to Order", IMAGE="fa-plus";
 END
+
 END
 END

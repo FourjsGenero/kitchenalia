@@ -2,6 +2,7 @@ import fgl customer
 import fgl browser
 import fgl chart
 import fgl sync
+import util
 
 
 schema kitchenalia
@@ -15,6 +16,7 @@ define m_arr dynamic array of record
     cu_code like customer.cu_code
 end record
 define m_cu_code like customer.cu_code
+define m_row integer
 
 define wl, wg ui.window
 define f ui.form
@@ -143,6 +145,7 @@ end dialog
 function display_customer(l_row)
 define l_row integer
 
+    let m_row = l_row
     display by name m_customer_arr[l_row].*
 
 end function
@@ -153,6 +156,8 @@ define l_ol_rec record like order_line.*
 define result string
 define ok boolean
 define err_text string
+
+define map_url string
 
     menu
 
@@ -191,6 +196,11 @@ define err_text string
         on action chart_pie ATTRIBUTES(IMAGE="fa-pie-chart")
             #TODO add test connected, or shall we do in library?
             call chart.pie_customer_sales(m_cu_code) returning ok, err_text
+
+        on action map ATTRIBUTES(IMAGE="fa-globe")       
+            let map_url = sfmt("z=12&t=m&q=+%1+%2", m_customer_arr[m_row].cu_lat, m_customer_arr[m_row].cu_lon)
+            let map_url = "http://maps.google.com/maps?",map_url
+            call browser.browser(m_customer_arr[m_row].cu_name, map_url )
     end menu
 end dialog
 
